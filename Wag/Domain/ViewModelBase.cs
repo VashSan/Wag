@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
-namespace Wag.ViewModel
+namespace Wag.Domain
 {
 	public abstract class ViewModelBase : INotifyPropertyChanged
 	{

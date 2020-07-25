@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Wag.View;
-using Wag.ViewModel;
+using Wag.Domain;
 
 namespace Wag
 {

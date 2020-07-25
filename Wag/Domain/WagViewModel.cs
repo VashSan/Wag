@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using Wag.Interface;
 
-namespace Wag.ViewModel
+namespace Wag.Domain
 {
 	public class WagViewModel : ViewModelBase, IWagViewModel
 	{
