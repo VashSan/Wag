@@ -4,9 +4,9 @@ using Wag.Interface;
 
 namespace Wag.Domain
 {
-	public class WagViewModel : ViewModelBase, IWagViewModel
+	public class StartMenuViewModel : ViewModelBase, IStartMenuViewModel
 	{
-		public WagViewModel()
+		public StartMenuViewModel()
 		{
 			UpdateSourcesCommand = new RelayCommand( UpdateSources );
 		}

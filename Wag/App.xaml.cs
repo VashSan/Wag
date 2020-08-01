@@ -22,8 +22,8 @@ namespace Wag
 
 		private void InitializeComponent()
 		{
-			var viewmodel = new WagViewModel();
-			var view = new WagWindow( viewmodel );
+			var viewmodel = new StartMenuViewModel();
+			var view = new StartMenu( viewmodel );
 			view.Show();
 		}
 	}

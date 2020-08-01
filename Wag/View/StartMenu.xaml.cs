@@ -6,9 +6,9 @@ namespace Wag.View
     /// <summary>
     /// Interaction logic for WagWindow.xaml
     /// </summary>
-    public partial class WagWindow : Window
+    public partial class StartMenu : Window
     {
-        public WagWindow( IWagViewModel viewModel )
+        public StartMenu( IStartMenuViewModel viewModel )
         {
 	        DataContext = viewModel;
 

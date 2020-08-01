@@ -1,4 +1,4 @@
-﻿<Window x:Class="Wag.View.WagWindow"
+﻿<Window x:Class="Wag.View.StartMenu"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
         xmlns:interface="clr-namespace:Wag.Interface"
         mc:Ignorable="d"
         Title="WagWindow" Height="450" Width="800"
-        d:DataContext="{d:DesignInstance interface:IWagViewModel}">
+        d:DataContext="{d:DesignInstance interface:IStartMenuViewModel}">
 
 	<Window.InputBindings>
 		<KeyBinding Command="{Binding Path=UpdateSourcesCommand}" Key="F5"/>
