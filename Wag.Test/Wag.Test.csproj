@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Wag\Wag.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\" />
+  </ItemGroup>
+
 </Project>
