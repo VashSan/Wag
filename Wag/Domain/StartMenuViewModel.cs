@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using Wag.Interface;
 
@@ -6,32 +7,44 @@ namespace Wag.Domain
 {
 	public class StartMenuViewModel : ViewModelBase, IStartMenuViewModel
 	{
-		public StartMenuViewModel()
+		private ISearchController Search { get; }
+
+		public StartMenuViewModel() : this( new SearchController() )
 		{
+
+		}
+
+		public StartMenuViewModel( ISearchController searchController )
+		{
+			Search = searchController;
+			Search.Register( this, nameof( Query ) );
 			UpdateSourcesCommand = new RelayCommand( UpdateSources );
 		}
 
-		private string _query;
+		private string myQuery;
 
 		public string Query
 		{
-			get => _query;
-			set	
+			get => myQuery;
+			set
 			{
-				if ( value == _query )
+				if ( value == myQuery )
 					return;
-				_query = value;
+				myQuery = value;
 				OnPropertyChanged( nameof( Query ) );
 			}
 		}
+
+		public ObservableCollection<IStartMenuAction> Actions { get; } = new ObservableCollection<IStartMenuAction>();
 
 		public ICommand UpdateSourcesCommand { get; }
 
 		private void UpdateSources( object obj )
 		{
+			// TODO recreate Index> Notify Search controller
 			Debug.WriteLine( "Update" );
 		}
 	}
 
-	
+
 }

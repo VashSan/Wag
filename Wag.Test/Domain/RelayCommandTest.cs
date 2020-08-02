@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Wag.Domain;
 
-namespace Wag.Test
+namespace Wag.Test.Domain
 {
 	public class RelayCommandTest
 	{

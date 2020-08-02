@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Wag.Domain;
 
-namespace Wag.Test
+namespace Wag.Test.Domain
 {
 	public class ViewModelBaseTest : ViewModelBase
 	{

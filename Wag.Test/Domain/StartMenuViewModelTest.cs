@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using Moq;
 using NUnit.Framework;
 using Wag.Domain;
+using Wag.Interface;
 
 namespace Wag.Test.Domain
 {
 	public class StartMenuViewModelTest
 	{
 		[Test]
-		public void Query_BeingEntered_TriggersSearch()
+		public void Initialization_Registers_WithSearchController()
 		{
 			// Arrange
-			var vm = new StartMenuViewModel();
+			var searchController = new Mock<ISearchController>();
 
 			// Act
-			vm.Query = "Test";
+			var vm = new StartMenuViewModel( searchController.Object );
 
 			// Assert
+			searchController.Verify( m => m.Register( vm, "Query" ), Times.Once, "The start menu view model must register with the search." );
 		}
+
 	}
 }
