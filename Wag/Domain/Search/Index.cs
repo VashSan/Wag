@@ -1,25 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Wag.Interface.Search;
 
 namespace Wag.Domain.Search
 {
+
 	public class Index<T> : IIndex<T> where T : IIndexableItem
 	{
+		private readonly SortedIndex<T> myIndex = new SortedIndex<T>();
+
 		public void Add( T item )
 		{
-			throw new NotImplementedException();
+			foreach ( string keyword in item.GetKeywords() )
+			{
+				string lowerCaseKeyword = keyword.ToLower();
+				AddKeyword( lowerCaseKeyword );
+				Relate( lowerCaseKeyword, item );
+			}
 		}
 
-		public void Remove( T item )
+		private void AddKeyword( string keyword )
 		{
-			throw new NotImplementedException();
+			if ( !myIndex.ContainsKey( keyword ) )
+			{
+				myIndex.Add( keyword, new List<T>() );
+			}
 		}
 
-		public IEnumerable<T> Search( string keyword )
+		private void Relate( string keyword, T item )
 		{
-			throw new NotImplementedException();
+			var bucket = myIndex[ keyword ];
+			if ( !bucket.Contains( item ) )
+			{
+				bucket.Add( item );
+			}
+		}
+
+		public void Clear()
+		{
+			myIndex.Clear();
+		}
+
+		public IEnumerable<T> Search( string query )
+		{
+			var lowerQuery = query.ToLower();
+
+			return SearchExactMatch( lowerQuery )
+				.Union( SearchStartingWith( lowerQuery ) );
+		}
+
+		private IEnumerable<T> SearchStartingWith( string partialKeyword )
+		{
+			return myIndex.Keys
+				.Where( key => key.StartsWith( partialKeyword ) )
+				.SelectMany( key => myIndex[ key ] );
+		}
+
+		private IEnumerable<T> SearchExactMatch( string keyword )
+		{
+			if ( myIndex.ContainsKey( keyword ) )
+			{
+				return myIndex[ keyword ];
+			}
+			return Enumerable.Empty<T>();
+		}
+
+		internal IEnumerable<T> GetAllIndexedItems()
+		{
+			return myIndex.Values.SelectMany( bucket => bucket );
+		}
+
+		private class SortedIndex<TValue> : SortedDictionary<string, List<TValue>>
+		{
 		}
 	}
-
 }
