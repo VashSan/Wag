@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using Wag.Interface;
+﻿using Wag.Interface;
+using Wag.Interface.Search;
 
-namespace Wag.Domain
+namespace Wag.Domain.Search
 {
 	public class SearchController : ISearchController
 	{

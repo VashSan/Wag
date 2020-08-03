@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Wag.Domain;
 using Wag.Interface;
+using Wag.Interface.Search;
 
 namespace Wag.Test.Domain
 {

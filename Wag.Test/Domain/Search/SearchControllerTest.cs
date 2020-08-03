@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
 using Moq;
 using NUnit.Framework;
-using Wag.Domain;
+using Wag.Domain.Search;
 using Wag.Interface;
 
-namespace Wag.Test.Domain
+namespace Wag.Test.Domain.Search
 {
 	class SearchControllerTest
 	{
