@@ -1,36 +1,63 @@
-﻿using Wag.Interface;
+﻿using System.Collections.Generic;
 using Wag.Interface.Search;
 
 namespace Wag.Domain.Search
 {
-	public class SearchController : ISearchController
+	public class SearchController<T> : ISearchController<T> where T : IIndexableItem
 	{
-		private IStartMenuViewModel SourceViewModel { get; set; }
+		private IIndex<T> Index { get; }
 
-		public void Register( IStartMenuViewModel source, string propertyName )
+		private ISearchInquirer<T> Inquirer { get; set; }
+		private IIndexSource<T> Source { get; set; }
+
+		public SearchController() : this( new Index<T>() )
 		{
-			SourceViewModel = source;
-			source.PropertyChanged += (s, e) =>
+		}
+
+		internal SearchController( IIndex<T> index )
+		{
+			Index = index;
+		}
+
+		public void Register( ISearchInquirer<T> inquirer, string propertyName )
+		{
+			Inquirer = inquirer;
+			inquirer.PropertyChanged += ( s, e ) =>
 			{
-				if ( e.PropertyName == propertyName )
+				if ( e.PropertyName == nameof(inquirer.Query) )
 				{
-					QueryIndex();
-					UpdateInquirer();
+					var result = Index.Search( inquirer.Query );
+					UpdateInquirer( result );
 				}
 			};
 		}
 
-		private void QueryIndex()
+		private void UpdateInquirer( IEnumerable<T> result )
 		{
-			// TODO perform a search and update a result list
+			// TODO can we avoid the clear?
+			Inquirer.SearchResult.Clear();
+			foreach ( var item in result )
+			{
+				Inquirer.SearchResult.Add( item );
+			}
 		}
 
-
-		private void UpdateInquirer()
+		public void AddIndexSource( IIndexSource<T> indexSource )
 		{
-			// TODO perform a search and update more efficient (without complete clear?)
-			SourceViewModel.Actions.Clear();
-			SourceViewModel.Actions.Add( null );
+			if ( Source != null )
+			{
+				throw new System.NotSupportedException( "Only a single source is supported" );
+			}
+
+			Source = indexSource;
+		}
+
+		public void RefreshIndex()
+		{
+			foreach ( var item in Source.GetIndexableItems() )
+			{
+				Index.Add( item );
+			}
 		}
 	}
 }

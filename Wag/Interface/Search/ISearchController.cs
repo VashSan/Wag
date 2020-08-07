@@ -1,7 +1,11 @@
-﻿namespace Wag.Interface.Search
+﻿using System.ComponentModel;
+
+namespace Wag.Interface.Search
 {
-	public interface ISearchController
+	public interface ISearchController<T> where T : IIndexableItem
 	{
-		void Register( IStartMenuViewModel sourceObject, string propertyName );
+		void Register( ISearchInquirer<T> sourceObject, string propertyName );
+		void AddIndexSource( IIndexSource<T> indexSource );
+		void RefreshIndex();
 	}
 }

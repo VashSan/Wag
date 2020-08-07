@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using Moq;
 using NUnit.Framework;
@@ -94,10 +96,11 @@ namespace Wag.Test.Domain.Search
 			Assert.That( index.GetAllIndexedItems(), Is.Empty );
 		}
 
-		[TestCase( "keyword", "keyword" )]
-		[TestCase( "KeyWorD", "Keyword" )]
-		[TestCase( "key", "Keyword" )]
-		public void Search_ExistingItems_ReturnsMatch( string query, params string[] keyword )
+		[TestCase( "keyword", "keyword", Description = "exact match" )]
+		[TestCase( "KeyWorD", "Keyword", Description = "case insensitivity" )]
+		[TestCase( "key", "Keyword", Description = "Starts with" )]
+		[TestCase( "wor", "keyword", Description = "Contains" )]
+		public void Search_ExistingItems_ReturnsMatch( string query, string keyword )
 		{
 			// Arrange
 			var item1 = GetItemMock( keyword );
@@ -108,6 +111,29 @@ namespace Wag.Test.Domain.Search
 
 			// Assert
 			Assert.That( result, Has.Exactly( 1 ).Items );
+		}
+
+		[Test]
+		[SuppressMessage( "ReSharper", "PossibleMultipleEnumeration" )]
+		public void Search_ItemsInReverseOrder_ReturnsBestMatchesFirst()
+		{
+			// Arrange
+
+			var listOfKeywords = new[] { "Cat", "CatDog", "ActualCat", "DogCat1" };
+			var expectedItems = listOfKeywords.Select( k => GetItemMock( k ) );
+			
+			foreach ( var item in expectedItems.Reverse() )
+			{
+				index.Add( item );
+			}
+
+			// Act
+			var result = index.Search( "Cat" );
+
+			// Assert
+			var expected = expectedItems.Select( i => i.ToString() );
+			var actual = result.Select( i => i.ToString() );
+			CollectionAssert.AreEqual( expected, actual );
 		}
 
 		[TestCase( "O", "U" )]
@@ -128,9 +154,9 @@ namespace Wag.Test.Domain.Search
 		{
 			var item = new Mock<IIndexableItem>();
 			item.Setup( m => m.GetKeywords() ).Returns( keyword );
+			item.Setup( m => m.ToString() ).Returns( string.Join( ',', keyword ) );
 			return item.Object;
 		}
-
 	}
 
 	public class TestItem : IIndexableItem

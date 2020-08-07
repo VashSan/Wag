@@ -1,14 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using Wag.Interface.Action;
 
 namespace Wag.Interface
 {
-	public interface IStartMenuAction
-	{
-
-	}
-
 	public interface IStartMenuViewModel : INotifyPropertyChanged
 	{
 		ICommand UpdateSourcesCommand { get; }

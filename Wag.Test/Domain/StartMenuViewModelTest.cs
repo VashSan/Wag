@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Wag.Domain;
 using Wag.Interface;
+using Wag.Interface.Action;
 using Wag.Interface.Search;
 
 namespace Wag.Test.Domain
@@ -17,7 +18,7 @@ namespace Wag.Test.Domain
 		public void Initialization_Registers_WithSearchController()
 		{
 			// Arrange
-			var searchController = new Mock<ISearchController>();
+			var searchController = new Mock<ISearchController<IStartMenuAction>>();
 
 			// Act
 			var vm = new StartMenuViewModel( searchController.Object );

@@ -46,7 +46,15 @@ namespace Wag.Domain.Search
 			var lowerQuery = query.ToLower();
 
 			return SearchExactMatch( lowerQuery )
-				.Union( SearchStartingWith( lowerQuery ) );
+				.Union( SearchStartingWith( lowerQuery ) )
+				.Union( SearchContains( lowerQuery ) );
+		}
+
+		private IEnumerable<T> SearchContains( string partialKeyword )
+		{
+			return myIndex.Keys
+				.Where( key => key.Contains( partialKeyword ) )
+				.SelectMany( key => myIndex[ key ] );
 		}
 
 		private IEnumerable<T> SearchStartingWith( string partialKeyword )
@@ -58,11 +66,9 @@ namespace Wag.Domain.Search
 
 		private IEnumerable<T> SearchExactMatch( string keyword )
 		{
-			if ( myIndex.ContainsKey( keyword ) )
-			{
-				return myIndex[ keyword ];
-			}
-			return Enumerable.Empty<T>();
+			return myIndex.Keys
+				.Where( key => key.Equals( keyword ) )
+				.SelectMany( key => myIndex[ key ] );
 		}
 
 		internal IEnumerable<T> GetAllIndexedItems()

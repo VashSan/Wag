@@ -1,9 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Moq;
 using NUnit.Framework;
 using Wag.Domain.Search;
 using Wag.Interface;
+using Wag.Interface.Action;
+using Wag.Interface.Search;
 
 namespace Wag.Test.Domain.Search
 {
@@ -13,19 +16,52 @@ namespace Wag.Test.Domain.Search
 		public void Query_Change_UpdatesResults()
 		{
 			// Arrange
-			var startMenuMock = new Mock<IStartMenuViewModel>();
+			var index = new Mock<IIndex<IStartMenuAction>>();
+			index.Setup( i => i.Search( It.IsAny<string>() ) ).Returns( CreateResultList() );
 
 			var actionList = new ObservableCollection<IStartMenuAction>();
-			startMenuMock.Setup( m => m.Actions ).Returns( actionList );
+			var inquirer = CreateInquirer( actionList );
 
-			var searchController = new SearchController();
-			searchController.Register( startMenuMock.Object, nameof( startMenuMock.Object.Query ) );
+			var searchController = new SearchController<IStartMenuAction>( index.Object );
+			searchController.Register( inquirer.Object, nameof( inquirer.Object.Query ) );
 
 			// Act
-			startMenuMock.Raise( m => m.PropertyChanged += null, new PropertyChangedEventArgs( "Query" ) );
+			inquirer.Raise( m => m.PropertyChanged += null, new PropertyChangedEventArgs( nameof( inquirer.Object.Query ) ) );
 
 			// Assert
 			Assert.That( actionList.Count, Is.GreaterThan( 0 ) );
+		}
+
+		private static List<IStartMenuAction> CreateResultList()
+		{
+			var resultList = new List<IStartMenuAction>();
+			resultList.Add( Mock.Of<IStartMenuAction>() );
+			return resultList;
+		}
+
+		private static Mock<ISearchInquirer<IStartMenuAction>> CreateInquirer(
+			IList<IStartMenuAction> actionList )
+		{
+			var inquirer = new Mock<ISearchInquirer<IStartMenuAction>>();
+			inquirer.Setup( m => m.Query ).Returns( "something" );
+
+			inquirer.Setup( m => m.SearchResult ).Returns( actionList );
+			return inquirer;
+		}
+
+		[Test]
+		public void Update_Invocation_InvokesIndexSource()
+		{
+			// Arrange
+			var mock = new Mock<IIndexSource<IStartMenuAction>>();
+			var searchController = new SearchController<IStartMenuAction>();
+			searchController.AddIndexSource( mock.Object );
+
+			// Act
+			searchController.RefreshIndex();
+
+			// Assert
+			mock.Verify( m => m.GetIndexableItems(), Times.Once );
 		}
 	}
 }
